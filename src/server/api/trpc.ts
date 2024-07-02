@@ -94,11 +94,11 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-const authenticatedProcedure = t.middleware(({ ctx, next }) => {
-  if (!ctx.session) {
+const isAuth = t.middleware(({ ctx, next }) => {
+  if (!ctx?.session?.user?.email) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({ ctx: { ...ctx, auth: ctx.session } });
 });
 
-export const protectedProcedure = t.procedure.use(authenticatedProcedure);
+export const protectedProcedure = t.procedure.use(isAuth);

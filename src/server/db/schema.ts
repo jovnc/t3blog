@@ -1,11 +1,10 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
   pgTableCreator,
-  serial,
   timestamp,
   varchar,
   boolean,
@@ -13,46 +12,94 @@ import {
   text,
   primaryKey,
   integer,
+  uuid,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
 export const createTable = pgTableCreator((name) => `t3blog_${name}`);
 
+// POST TABLES
 export const posts = createTable(
   "post",
   {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: varchar("name", { length: 256 }).notNull(),
+    content: text("content").notNull(),
+    imageUrl: text("image_url"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updatedAt", { withTimezone: true }),
+    userId: uuid("user").references(() => users.id, { onDelete: "cascade" }),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
   }),
 );
 
+export const comments = createTable("comment", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }),
+  userId: uuid("user").references(() => users.id, { onDelete: "cascade" }),
+  postId: uuid("post").references(() => posts.id, { onDelete: "cascade" }),
+});
+
+export const likes = createTable("like", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  userId: uuid("user").references(() => users.id, { onDelete: "cascade" }),
+  postId: uuid("post").references(() => posts.id, { onDelete: "cascade" }),
+});
+
 export const users = pgTable("user", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
 });
 
+// Declaring relationship between tables
+export const postRelations = relations(posts, ({ one }) => ({
+  users: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const likeRelations = relations(likes, ({ one }) => ({
+  users: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
+  }),
+  posts: one(posts, {
+    fields: [likes.postId],
+    references: [posts.id],
+  }),
+}));
+
+export const commentRelations = relations(comments, ({ one }) => ({
+  users: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
+  }),
+  posts: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+}));
+
+// AUTH TABLES
 export const accounts = pgTable(
   "account",
   {
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccountType>().notNull(),
@@ -75,7 +122,7 @@ export const accounts = pgTable(
 
 export const sessions = pgTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
-  userId: text("userId")
+  userId: uuid("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
@@ -99,7 +146,7 @@ export const authenticators = pgTable(
   "authenticator",
   {
     credentialID: text("credentialID").notNull().unique(),
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     providerAccountId: text("providerAccountId").notNull(),

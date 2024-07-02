@@ -7,6 +7,7 @@ import AvatarDropdownMenu from "./AvatarDropdownMenu";
 import SignOutButton from "../auth/SignOutButton";
 import SignInPageButton from "../auth/SignInPageButton";
 import NavSheet from "./NavSheet";
+import NavLink from "./NavLink";
 
 export default async function NavBar() {
   const session = await auth();
@@ -14,7 +15,7 @@ export default async function NavBar() {
   const isLoggedIn = session?.user == null ? false : true;
 
   return (
-    <div className="flex w-full flex-row px-3 py-2">
+    <div className="flex w-full flex-row bg-gray-100 bg-opacity-80 px-3 py-2 dark:bg-black dark:bg-opacity-80">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/"
@@ -23,20 +24,8 @@ export default async function NavBar() {
           <Package2 className="h-6 w-6" />
           <span className="sr-only">T3 Blog</span>
         </Link>
-        <Link
-          href="/"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Home
-        </Link>
-        {isLoggedIn && (
-          <Link
-            href="/protected"
-            className="text-foreground transition-colors hover:text-foreground"
-          >
-            Protected
-          </Link>
-        )}
+        <NavLink href="/">Home</NavLink>
+        {isLoggedIn && <NavLink href="/posts">Posts</NavLink>}
       </nav>
       <NavSheet isLoggedIn={isLoggedIn} />
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">

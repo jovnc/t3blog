@@ -6,6 +6,7 @@ import { Menu, Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
+import NavSheetLink from "./NavSheetLink";
 
 export default function NavSheet({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -28,22 +29,14 @@ export default function NavSheet({ isLoggedIn }: { isLoggedIn: boolean }) {
             <span className="sr-only">T3 Blog</span>
           </Link>
 
-          <Link
-            href="/"
-            className="text-muted-foreground hover:text-foreground"
-            onClick={() => setSheetOpen(false)}
-          >
+          <NavSheetLink href="/" setSheetOpen={setSheetOpen}>
             Home
-          </Link>
+          </NavSheetLink>
 
           {isLoggedIn && (
-            <Link
-              href="/protected"
-              className="hover:text-foreground"
-              onClick={() => setSheetOpen(false)}
-            >
-              Protected
-            </Link>
+            <NavSheetLink href="/posts" setSheetOpen={setSheetOpen}>
+              Posts
+            </NavSheetLink>
           )}
         </nav>
       </SheetContent>

@@ -15,6 +15,7 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITHUB_SECRET: z.string(),
+    UPLOADTHING_SECRET: z.string(),
   },
 
   /**
@@ -37,6 +38,7 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
     AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
+    UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

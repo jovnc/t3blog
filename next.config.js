@@ -15,6 +15,18 @@ const config = {
 
     return config;
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "github.githubassets.com",
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
+    ],
+  },
 };
 
 export default config;

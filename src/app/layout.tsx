@@ -32,7 +32,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <TRPCReactProvider>
-            <div className="flex min-h-screen flex-col">
+            <div className="flex min-h-screen flex-col bg-gradient-to-b from-[#f1eafc] to-[#cacbd5] dark:bg-gradient-to-b dark:from-[#2e026d] dark:to-[#15162c]">
               <NavBar />
               {children}
             </div>

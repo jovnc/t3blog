@@ -4,7 +4,17 @@ This is a simple blog web application that is built using the T3 stack with Type
 
 ## Features
 
-- [ ] Homepage layout
-- [ ] Blog posts layout (with mock data)
-- [ ] Allow users to create, update, delete their own posts
-- [ ] Comment on other users posts
+TODO
+
+- Likes
+  - Toggle between like and remove like for the post
+  - Like Count
+  - Optimistic UI updates
+- Comments
+  - Make a new comment on the post
+  - Delete comment for the post
+  - Edit comment for the post
+  - View comments for the post
+- Posts
+  - Lazy loading of posts
+  - Infinite scrolling of posts
